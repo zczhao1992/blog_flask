@@ -2,9 +2,9 @@
 from ..exts import db
 
 
-class User(db.Model):
+class AdminUserModel(db.Model):
     """ 用户表 """
-    __tablename__ = 'tb_user'
+    __tablename__ = 'tb_adminuser'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(30), unique=True, index=True)
-    age = db.Column(db.Integer, default=1)
+    name = db.Column(db.String(30), unique=True)
+    passwd = db.Column(db.String(30))
