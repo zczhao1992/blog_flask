@@ -1,5 +1,5 @@
 """ 数据库文件 """
-from .exts import db
+from ..exts import db
 
 
 class User(db.Model):
