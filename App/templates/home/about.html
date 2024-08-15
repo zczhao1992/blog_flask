@@ -43,12 +43,13 @@
         <div class="wdxc">
             <h2>我的相册</h2>
             <ul>
-                <li> <a href="#"><img src="/static/home/images/1.jpg"></a> </li>
-                <li> <a href="#"><img src="/static/home/images/2.jpg"></a> </li>
-                <li> <a href="#"><img src="/static/home/images/3.jpg"></a> </li>
-                <li> <a href="#"><img src="/static/home/images/4.jpg"></a> </li>
-                <li> <a href="#"><img src="/static/home/images/5.jpg"></a> </li>
-                <li> <a href="#"><img src="/static/home/images/6.jpg"></a> </li>
+                {% for photo in photos %}
+
+                <li>
+                  <a href="#"><img src="{{photo.url}}" /></a>
+                </li>
+    
+                {% endfor %}
             </ul>
         </div>
         <div class="search">
@@ -66,9 +67,9 @@
         <div class="fenlei">
             <h2>文章分类</h2>
             <ul>
-                <li><a href="#">分类1</a></li>
-                <li><a href="#">分类2</a></li>
-                <li><a href="#">分类3</a></li>
+                {% for category in categorys %}
+                <li><a href="#">{{category.name}}</a></li>
+                {% endfor %}
             </ul>
         </div>
 
