@@ -111,7 +111,11 @@
             <div class="col-md-5">
               <h1 class="page-header">添加分类</h1>
 
-              <form action="" method="post" autocomplete="off">
+              <form
+                action="/admin/addcategory/"
+                method="post"
+                autocomplete="off"
+              >
                 <div class="form-group">
                   <label for="category-name">分类名称</label>
                   <input
@@ -160,30 +164,16 @@
                     </tr>
                   </thead>
                   <tbody>
+                    {% for category in categorys %}
                     <tr>
-                      <td>1</td>
-                      <td>分类1</td>
+                      <td>{{category.id}}</td>
+                      <td>{{category.name}}</td>
                       <td>
-                        <a href="#">修改</a>
-                        <a href="#">删除</a>
+                        <a href="/admin/updatecategory/{{category.id}}">修改</a>
+                        <a href="#" cid="{{category.id}}">删除</a>
                       </td>
                     </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>分类2</td>
-                      <td>
-                        <a href="#">修改</a>
-                        <a href="#">删除</a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>分类3</td>
-                      <td>
-                        <a href="#">修改</a>
-                        <a href="#">删除</a>
-                      </td>
-                    </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>
@@ -203,6 +193,11 @@
           var id = that.attr("cid"); //对应id
           if (event.srcElement.outerText === "删除") {
             if (window.confirm("此操作不可逆，是否确认？")) {
+              $.post("/admin/delcategory/", { id: id }, function (data) {
+                if (data.code == 200) {
+                  location.reload();
+                }
+              });
             }
           }
         });
