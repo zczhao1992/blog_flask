@@ -1,4 +1,5 @@
 """ 后台路由 """
+import time
 from functools import wraps
 from flask import Blueprint, render_template, request, redirect, jsonify
 from ..models.models_admin import *
@@ -193,3 +194,94 @@ def admin_update_category(id):
         return redirect('/admin/category/')
     else:
         return '请求方式错误'
+
+
+# 后台管理-文章
+@admin.route("/admin/article/")
+@login_required
+def admin_article():
+    """ 文章列表 """
+    articles = ArticleModel.query.all()
+    return render_template('admin/article.html',
+                           username=request.user.name,
+                           articles=articles)
+
+
+# 后台管理-添加文章
+@admin.route("/admin/addarticle/", methods=["GET", "POST"])
+@login_required
+def admin_add_article():
+    """ 添加文章 """
+    if request.method == "GET":
+        articles = ArticleModel.query.all()
+        categorys = CategoryModel.query.all()
+        return render_template('admin/article_add.html',
+                               username=request.user.name,
+                               categorys=categorys,
+                               articles=articles)
+    elif request.method == "POST":
+        name = request.form.get("name")
+        keywords = request.form.get("keywords")
+        content = request.form.get("content")
+        category = request.form.get("category")
+        img = request.files.get("img")
+
+        # 图片的存储路径
+        img_name = f'{time.time()}-{img.filename}'
+        img_url = f'/static/home/uploads/{img_name}'
+
+        try:
+            article = ArticleModel()
+            article.name = name
+            article.keywords = keywords
+            article.content = content
+            article.img = img_url
+            article.category_id = category
+
+            db.session.add(article)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            db.session.flush()
+            print(e)
+
+        return redirect('/admin/article/')
+
+
+# 后台管理-修改文章
+@admin.route("/admin/updatearticle/<id>/", methods=["GET", "POST"])
+@login_required
+def admin_update_article(id):
+    """ 修改文章 """
+    article = ArticleModel.query.get(id)
+    categorys = CategoryModel.query.all()
+
+    if request.method == 'GET':
+
+        return render_template('admin/article_update.html',
+                               username=request.user.name,
+                               article=article,
+                               categorys=categorys
+                               )
+    elif request.method == 'POST':
+        pass
+
+
+# 后台管理-删除文章
+@admin.route("/admin/deletearticle/", methods=["GET", "POST"])
+@login_required
+def admin_del_article():
+    """ 删除文章 """
+    if request.method == 'POST':
+        id = request.form.get("id")
+        article = ArticleModel.query.get(id)
+        try:
+            db.session.delete(article)
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return jsonify({'code': 500, "msg": '删除失败！'})
+
+        return jsonify({'code': 200, "msg": '删除成功！'})
+
+    return jsonify({'code': 400, "msg": '请求方式错误！'})
